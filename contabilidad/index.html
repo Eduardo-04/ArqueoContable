@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Contable Didáctico</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sistema Contable Didáctico</h1>
+            <h2>Cafeteria "El Estudiante"</h2>
+            <button id="borrar-datos" class="danger-btn" onclick="confirmarBorrado()">Borrar Todos los Datos</button>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab('arqueo')">Arqueo de Caja</button>
+            <button class="tab-button" onclick="openTab('diario')">Libro Diario</button>
+            <button class="tab-button" onclick="openTab('mayor')">Libro Mayor (T)</button>
+            <button class="tab-button" onclick="openTab('balanza')">Balanza de Comprobación</button>
+            <button class="tab-button" onclick="openTab('estado-resultados')">Estado de Resultados</button>
+        </div>
+
+        <div id="arqueo" class="tab-content active">
+            <h3>Arqueo de Caja</h3>
+            <div class="form-group">
+                <label for="fecha-arqueo">Fecha:</label>
+                <input type="date" id="fecha-arqueo">
+            </div>
+            
+            <div class="two-columns">
+                <div class="column">
+                    <h4>Efectivo Físico</h4>
+                    <table id="efectivo-table">
+                        <thead>
+                            <tr>
+                                <th>Denominación</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select class="denominacion">
+                                        <option value="1000">Billete de $1,000</option>
+                                        <option value="500">Billete de $500</option>
+                                        <option value="200">Billete de $200</option>
+                                        <option value="100">Billete de $100</option>
+                                        <option value="50">Billete de $50</option>
+                                        <option value="20">Billete de $20</option>
+                                        <option value="10">Moneda de $10</option>
+                                        <option value="5">Moneda de $5</option>
+                                        <option value="2">Moneda de $2</option>
+                                        <option value="1">Moneda de $1</option>
+                                        <option value="0.5">Moneda de $0.50</option>
+                                    </select>
+                                </td>
+                                <td><input type="number" class="cantidad" min="0" placeholder="0"></td>
+                                <td class="subtotal">$0.00</td>
+                                <td><button class="delete-btn" onclick="deleteRow(this)">✕</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button onclick="addRow('efectivo-table')">+ Agregar Denominación</button>
+                    <div class="total">
+                        <strong>Total Efectivo Físico:</strong> <span id="total-efectivo">$0.00</span>
+                    </div>
+                </div>
+                
+                <div class="column">
+                    <h4>Movimientos</h4>
+                    <div class="movimientos-section">
+                        <h5>Ingresos</h5>
+                        <table id="ingresos-table">
+                            <thead>
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="concepto" placeholder="Venta de mercancía"></td>
+                                    <td><input type="number" class="monto" placeholder="0.00"></td>
+                                    <td><button class="delete-btn" onclick="deleteRow(this)">✕</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button onclick="addRow('ingresos-table')">+ Agregar Ingreso</button>
+                        <div class="subtotal">
+                            <strong>Total Ingresos:</strong> <span id="total-ingresos">$0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="movimientos-section">
+                        <h5>Egresos</h5>
+                        <table id="egresos-table">
+                            <thead>
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="concepto" placeholder="Compra de materiales"></td>
+                                    <td><input type="number" class="monto" placeholder="0.00"></td>
+                                    <td><button class="delete-btn" onclick="deleteRow(this)">✕</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button onclick="addRow('egresos-table')">+ Agregar Egreso</button>
+                        <div class="subtotal">
+                            <strong>Total Egresos:</strong> <span id="total-egresos">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="resultado-arqueo">
+                <div><strong>Total según Movimientos:</strong> <span id="total-movimientos">$0.00</span></div>
+                <div><strong>Diferencia:</strong> <span id="diferencia-arqueo">$0.00</span></div>
+            </div>
+            <button class="save-btn" onclick="guardarArqueo()">Guardar Arqueo</button>
+        </div>
+
+        <div id="diario" class="tab-content">
+            <h3>Libro Diario</h3>
+            <div class="form-group">
+                <label for="fecha-diario">Fecha:</label>
+                <input type="date" id="fecha-diario">
+            </div>
+            
+            <table id="diario-table">
+                <thead>
+                    <tr>
+                        <th>Cuenta</th>
+                        <th>Debe</th>
+                        <th>Haber</th>
+                        <th>Concepto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" class="cuenta" placeholder="Caja" list="cuentas-list">
+                        </td>
+                        <td><input type="number" class="debe" placeholder="0.00"></td>
+                        <td><input type="number" class="haber" placeholder="0.00"></td>
+                        <td><input type="text" class="concepto" placeholder="Venta al contado"></td>
+                        <td><button class="delete-btn" onclick="deleteRow(this)">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" class="cuenta" placeholder="Ventas" list="cuentas-list">
+                        </td>
+                        <td><input type="number" class="debe" placeholder="0.00"></td>
+                        <td><input type="number" class="haber" placeholder="0.00"></td>
+                        <td><input type="text" class="concepto" placeholder="Venta al contado"></td>
+                        <td><button class="delete-btn" onclick="deleteRow(this)">✕</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button onclick="addRowDiario()">+ Agregar Asiento</button>
+            <div class="totales-diario">
+                <div><strong>Total Debe:</strong> <span id="total-debe">0.00</span></div>
+                <div><strong>Total Haber:</strong> <span id="total-haber">0.00</span></div>
+                <div class="diferencia"><strong>Diferencia:</strong> <span id="diferencia-diario">0.00</span></div>
+            </div>
+            <button class="save-btn" onclick="guardarDiario()">Guardar Diario</button>
+        </div>
+
+        <div id="mayor" class="tab-content">
+            <h3>Libro Mayor (Forma T)</h3>
+            <div class="form-group">
+                <label for="fecha-mayor">Fecha de corte:</label>
+                <input type="date" id="fecha-mayor" onchange="generarMayorCompleto()">
+            </div>
+            
+            <div id="mayor-completo-container">
+                <!-- Aquí se generarán todas las cuentas en forma de T -->
+            </div>
+        </div>
+
+        <div id="balanza" class="tab-content">
+            <h3>Balanza de Comprobación</h3>
+            <div class="form-group">
+                <label for="fecha-balanza">Fecha:</label>
+                <input type="date" id="fecha-balanza">
+            </div>
+            
+            <table id="balanza-table">
+                <thead>
+                    <tr>
+                        <th>Cuenta</th>
+                        <th>Debe</th>
+                        <th>Haber</th>
+                        <th>Saldo Deudor</th>
+                        <th>Saldo Acreedor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas se generarán con JS -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Totales</th>
+                        <th id="total-balanza-debe">0.00</th>
+                        <th id="total-balanza-haber">0.00</th>
+                        <th id="total-saldo-deudor">0.00</th>
+                        <th id="total-saldo-acreedor">0.00</th>
+                    </tr>
+                </tfoot>
+            </table>
+            <button class="generate-btn" onclick="generarBalanza()">Generar Balanza</button>
+        </div>
+
+        <!-- Mantén todo igual hasta la sección del estado de resultados -->
+
+<div id="estado-resultados" class="tab-content">
+    <h3>Estado de Resultados</h3>
+    <div class="form-group">
+        <label for="periodo-resultados">Período:</label>
+        <input type="month" id="periodo-resultados">
+        <label for="tasa-isr">Tasa de ISR (%):</label>
+        <input type="number" id="tasa-isr" min="0" max="100" value="30" step="0.1">
+    </div>
+    
+    <div class="estado-resultados-container">
+        <div class="ingresos-section">
+            <h4>Ingresos</h4>
+            <div id="ingresos-resultados">
+                <!-- Se generará con JS -->
+            </div>
+            <div class="total-section">
+                <strong>Total Ingresos:</strong> <span id="total-ingresos-resultados">0.00</span>
+            </div>
+        </div>
+        
+        <div class="gastos-section">
+            <h4>Gastos</h4>
+            <div id="gastos-resultados">
+                <!-- Se generará con JS -->
+            </div>
+            <div class="total-section">
+                <strong>Total Gastos:</strong> <span id="total-gastos-resultados">0.00</span>
+            </div>
+        </div>
+        
+        <div class="resultado-operacion">
+            <strong>Resultado Operativo:</strong> 
+            <span id="resultado-operativo">0.00</span>
+        </div>
+        
+        <div class="impuestos-section">
+            <h4>Impuestos</h4>
+            <div id="isr-calculo">
+                <!-- Se generará con JS -->
+            </div>
+            <div class="total-section">
+                <strong>Total ISR:</strong> <span id="total-isr">0.00</span>
+            </div>
+        </div>
+        
+        <div class="resultado-final">
+            <strong>Resultado Neto del Período:</strong> 
+            <span id="utilidad-perdida">0.00</span>
+            (<span id="tipo-resultado">Utilidad</span>)
+        </div>
+    </div>
+    <button class="generate-btn" onclick="generarEstadoResultados()">Generar Estado</button>
+</div>
+
+    <datalist id="cuentas-list">
+        <!-- Se llenará con JS -->
+    </datalist>
+
+    <script src="script.js"></script>
+</body>
+</html>
